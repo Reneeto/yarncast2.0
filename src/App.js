@@ -77,6 +77,7 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         setCoordinates(data);
+        console.log(coordinates);
       })
       .catch((err) => {
         console.log(err.message);

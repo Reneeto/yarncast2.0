@@ -1,6 +1,9 @@
-node_modules
-.babelrc
-webpack.config.js
-package.json
-package-lock.json
-.eslintrc.json
+# Node modules
+node_modules/
+
+# Build directories
+dist/
+build/
+
+# Environment variables
+.env

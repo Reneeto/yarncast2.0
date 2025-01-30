@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import * as React from "react";
+import {useState, useRef, useEffect} from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import logo from "../assets/yarncast-logo.png";
+import logo from "../assets/yarncast-logo.png"
 import placeholder from "../assets/placeholder-with-text.png";
 
 const App = () => {
@@ -32,14 +33,15 @@ const App = () => {
       },
     ],
   });
-  const [location, setLocation] = useState("");
-  const [weather, setWeather] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [startDateString, setStartDateString] = useState("");
-  const [endDate, setEndDate] = useState(new Date());
-  const [endDateString, setEndDateString] = useState("");
-  const [colors, setColors] = useState([]);
-  const [displayChildren, setDisplayChildren] = useState([displayImage]);
+  const [location, setLocation] = useState<string>("");
+  const [weather, setWeather] = useState<number[]>([]);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [startDateString, setStartDateString] = useState<string>("");
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [endDateString, setEndDateString] = useState<string>("");
+  const [colors, setColors] = useState<string[]>([]);
+  //displayImage starts as an HTML Element
+  const [displayChildren, setDisplayChildren] = useState<React.JSX.Element[]>([displayImage]);
   const isFirstRender = useRef(true);
   useEffect(() => {
     formatDate(startDate);
@@ -51,7 +53,7 @@ const App = () => {
       isFirstRender.current = false;
       return;
     }
-    getWeatherData(weather);
+    getWeatherData();
     isDisabled = true;
   }, [endDate]);
 
@@ -85,7 +87,7 @@ const App = () => {
   };
 
   //SECOND: format start and end dates for API call
-  const formatDate = (date) => {
+  const formatDate = (date: Date): void => {
     const formattedDate = new Date(date).toISOString().substring(0, 10);
     if (date === startDate) {
       setStartDateString(formattedDate);
@@ -113,77 +115,66 @@ const App = () => {
   };
 
   //FOURTH: match temps to color formulas
-  function matchColors(tempsArr) {
-    console.log("matching colors");
-    const rangeValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    const colorsArr = [];
-    tempsArr.forEach((el) => {
+  function matchColors(tempsArr: number[]): void {
+    const rangeValues: number[] = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const colorsArr: string[] = [];
+    tempsArr.forEach((el: number) => {
       if (el < rangeValues[0]) {
         //0-
         colorsArr.push("#62767d");
-        // colorsArr[el] = "#041c5f";
       } else if (el < rangeValues[1]) {
         //0-9
         colorsArr.push("#84928a");
-        // colorsArr[el] = "#3e64a8";
       } else if (el < rangeValues[2]) {
         //10-19
         colorsArr.push("#858F7E");
-        // colorsArr[el] = "#72b1c4";
       } else if (el < rangeValues[3]) {
         //20-29
         colorsArr.push("#868B72");
-        // colorsArr[el] = "#cdd8de";
       } else if (el < rangeValues[4]) {
         //30-39
         colorsArr.push("#65684d");
-        // colorsArr[el] = "#7192a4";
       } else if (el < rangeValues[5]) {
         //40-49
         colorsArr.push("#A9A38A");
-        // colorsArr[el] = "#046772";
       } else if (el < rangeValues[6]) {
         //50-59
         colorsArr.push("#ecdec7");
-        // colorsArr[el] = "#303723";
       } else if (el < rangeValues[7]) {
         //60-69
         colorsArr.push("#E2CEBB");
-        // colorsArr[el] = "#77784e";
       } else if (el < rangeValues[8]) {
         //70-79
         colorsArr.push("#d8beaf");
-        // colorsArr[el] = "#d2ab4c";
       } else if (el < rangeValues[9]) {
         //80-89
         colorsArr.push("#A58A82");
-        // colorsArr[el] = "#a25a34";
       } else if (el < rangeValues[10]) {
         //90-99
         colorsArr.push("#725654");
-        // colorsArr[el] = "#c74722";
       } else {
         //100+
         colorsArr.push("#513438");
-        // colorsArr[el] = "#6f030f";
       }
     });
-    return setColors(colorsArr);
+    setColors(colorsArr);
   }
-  //startRef and onKeyDown lets you tab from the startDate to endDate date picker
-  const startRef = useRef();
 
-  const onKeyDown = (e) => {
-    if (e.keyCode === 9 || e.which === 9) {
-      startRef.current.setOpen(false);
+  //startRef and onKeyDown lets you tab from the startDate to endDate date picker
+  //need to define specific type for startRef
+
+  const startRef = useRef<DatePicker>(null);
+
+  const onKeyDown = (e: React.KeyboardEvent): void => {
+    //if key is is tab
+    if (e.key === "tab") {
+      //current is optional in case the ref is null  
+      startRef.current?.setOpen(false);
     }
   };
 
-  const handleClick = (event) => {
-    setDisplayChildren(displayChildren.pop());
-    setDisplayChildren(
-      displayChildren.concat(<Blanket key={displayChildren.length} />)
-    );
+  const handleClick = (): void => {
+    setDisplayChildren([<Blanket key={0} />]);
   };
 
   {
@@ -206,7 +197,8 @@ const App = () => {
             onChange={(event) => setLocation(event.target.value)}
             // onKeyDown={handleKeyDown}
             placeholder="Select Location"
-            onfocus="this.value=''"
+            //removing "Select Location" and replacing with empty string
+            onFocus={(event) => (event.target.placeholder = "")}
             onBlur={searchLocation}
             className="inputs"
           />
@@ -216,7 +208,8 @@ const App = () => {
             selectsStart
             startDate={startDate}
             endDate={endDate} // add the endDate to your startDate DatePicker now that it is defined
-            onChange={(date) => setStartDate(date)}
+            onChange={(date: Date) => setStartDate(date)}
+            //START HERE: FOCUS ON UNDERSTANDING WHAT USEREF IS DOING AND HOW TO FIX IT
             ref={startRef}
             onKeyDown={onKeyDown}
             className="inputs"
@@ -228,7 +221,7 @@ const App = () => {
             startDate={startDate}
             endDate={endDate}
             minDate={startDate}
-            onChange={(date) => setEndDate(date)}
+            onChange={(date: Date) => setEndDate(date)}
             className="inputs"
           />
           <div className="buttons">
@@ -239,21 +232,10 @@ const App = () => {
             >
               Generate Colors
             </button>
-            {/* <button disabled={!location} className="inputs">
-              Export to PDF
-            </button> */}
           </div>
         </div>
         <div className="display" id="display">
           {displayChildren}
-          {/* <h2>This is the location: {location}</h2>
-          <h2>This is the start date: {`${startDate}`}</h2>
-          <h2>This is the end date : {`${endDate}`}</h2>
-          <h2>This is the start date string: {`${startDateString}`}</h2>
-          <h2>This is the end date string: {`${endDateString}`}</h2>
-          <h2>This is the longitude: {coordinates.results[0].longitude}</h2>
-          <h2>This is the latitude: {coordinates.results[0].latitude}</h2>
-          <h2>This is the weather: {weather}</h2> */}
         </div>
         <div className="footer" id="footer">
           <p>© 2023 yarncast</p>

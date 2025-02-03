@@ -49882,14 +49882,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var App = function () {
-    //what does this do?
-    var isDisabled = true;
     //image that is displayed before the blanket is generated. could move this to it's own component that would be replaced by the blanket
     var displayImage = (react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", { src: _assets_placeholder_with_text_png__WEBPACK_IMPORTED_MODULE_3__["default"], alt: "placeholder image", className: "image-fade-in" }));
     //generates color for each row of the blanket
     var Blanket = function () {
-        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "blanket" }, colors.map(function (color) { return (react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null,
-            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "row", style: { backgroundColor: color } }, "\u00A0"))); })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "blanket" }, colors.map(function (color, index) { return (react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null,
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "row", key: index, style: { backgroundColor: color } }, "\u00A0"))); })));
     };
     //latitude and longitude of input location - structure reflects how the API returns the data
     var _a = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
@@ -49913,6 +49911,7 @@ var App = function () {
     var _h = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]), colors = _h[0], setColors = _h[1];
     //how I'm displaying the blanket - starts with placeholder image
     var _j = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([displayImage]), displayChildren = _j[0], setDisplayChildren = _j[1];
+    //useRef to keep track of whether the component is rendering for the first time
     var isFirstRender = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);
     //startRef is a reference to the startDate DatePicker
     var startRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
@@ -49923,18 +49922,13 @@ var App = function () {
     }, [startDate, endDate]);
     // what does this do?
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+        console.log("isFirstRender", isFirstRender);
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
         getWeatherData();
-        isDisabled = true;
     }, [endDate]);
-    //what
-    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-        isDisabled = true;
-        return;
-    }, [location]);
     //what
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
         if (isFirstRender.current) {

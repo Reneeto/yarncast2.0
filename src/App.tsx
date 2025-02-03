@@ -2,12 +2,12 @@ import * as React from "react";
 import {useState, useRef, useEffect} from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import logo from "../assets/yarncast-logo.png"
 import placeholder from "../assets/placeholder-with-text.png";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import Filters from "./components/Filters";
 
 const App = () => {
-  //what does this do?
-  let isDisabled: boolean = true;
 
   //image that is displayed before the blanket is generated. could move this to it's own component that would be replaced by the blanket
   const displayImage = (
@@ -18,9 +18,9 @@ const App = () => {
   const Blanket = () => {
     return (
       <div className="blanket">
-        {colors.map((color) => (
+        {colors.map((color, index) => (
           <>
-            <div className="row" style={{ backgroundColor: color }}>
+            <div className="row" key={index} style={{ backgroundColor: color }}>
               &nbsp;
             </div>
           </>
@@ -51,6 +51,7 @@ const App = () => {
   const [colors, setColors] = useState<string[]>([]);
   //how I'm displaying the blanket - starts with placeholder image
   const [displayChildren, setDisplayChildren] = useState<React.JSX.Element[]>([displayImage]);
+  //useRef to keep track of whether the component is rendering for the first time
   const isFirstRender = useRef(true);
   //startRef is a reference to the startDate DatePicker
   const startRef = useRef<DatePicker>(null);
@@ -61,23 +62,17 @@ const App = () => {
     formatDate(endDate);
   }, [startDate, endDate]);
 
-  // what does this do?
+  //when endDate is updated, get the weather data
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
     getWeatherData();
-    isDisabled = true;
   }, [endDate]);
 
-  //what
-  useEffect(() => {
-    isDisabled = true;
-    return;
-  }, [location]);
 
-  //what
+  //when weather is updated, match the colors
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -194,63 +189,16 @@ const App = () => {
   {
     return (
       <div className="container">
-        <div className="header" id="header">
-          <img src={logo} alt="yarncast-logo" className="image-fade-in" />
-          <p>
-            A website that helps crafters visualize their temperature blanket
-            projects
-            <br /> and make it easy to get the data they need to get crafting.
-          </p>
-        </div>
-        <div id="filters">
-          <p>Choose your temperature blanket location and date range.</p>
-          <label>Search by city or ZIP code</label>
-          <input
-            type="text"
-            value={location}
-            onChange={(event) => setLocation(event.target.value)}
-            placeholder="Select Location"
-            onFocus={(event) => (event.target.placeholder = "")} //removes "Select Location" and replacing with empty string
-            onBlur={searchLocation}
-            className="inputs"
-          />
-          <label>Enter Start Date</label>
-          <DatePicker
-            selected={startDate}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(date: Date) => setStartDate(date)}
-            ref={startRef}
-            onKeyDown={onKeyDown}
-            className="inputs"
-          />
-          <label>Enter End Date</label>
-          <DatePicker
-            selected={endDate}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            onChange={(date: Date) => setEndDate(date)}
-            className="inputs"
-          />
-          <div className="buttons">
-            <button
-              disabled={!location}
-              onClick={() => handleClick()}
-              className="inputs"
-            >
-              Generate Colors
-            </button>
-          </div>
-        </div>
+        <Header /> 
+        <Filters 
+          location={location}
+          setLocation={setLocation}
+          searchLocation={searchLocation}
+        />
         <div className="display" id="display">
           {displayChildren}
         </div>
-        <div className="footer" id="footer">
-          <p>© 2023 yarncast</p>
-        </div>
+        <Footer />
       </div>
     );
   }

@@ -8,6 +8,7 @@
       "target": "es5",            // specify ECMAScript target version
       "allowJs": true,             // allow a partial TypeScript and JavaScript codebase
       "moduleResolution": "bundler",
+      "noImplicitAny": true,
   },
   "include": [
       "./src/",

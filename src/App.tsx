@@ -6,17 +6,20 @@ import logo from "../assets/yarncast-logo.png"
 import placeholder from "../assets/placeholder-with-text.png";
 
 const App = () => {
-  let isDisabled = true;
+  //what does this do?
+  let isDisabled: boolean = true;
+
+  //image that is displayed before the blanket is generated. could move this to it's own component that would be replaced by the blanket
   const displayImage = (
     <img src={placeholder} alt="placeholder image" className="image-fade-in" />
   );
+
+  //generates color for each row of the blanket
   const Blanket = () => {
     return (
       <div className="blanket">
         {colors.map((color) => (
           <>
-            {/* <g className="g-elements" x1="50" y1="0" x2="50" y2="300" style={{ backgroundColor: color }}>&nbsp;</g> */}
-
             <div className="row" style={{ backgroundColor: color }}>
               &nbsp;
             </div>
@@ -25,6 +28,8 @@ const App = () => {
       </div>
     );
   };
+
+  //latitude and longitude of input location - structure reflects how the API returns the data
   const [coordinates, setCoordinates] = useState({
     results: [
       {
@@ -33,21 +38,30 @@ const App = () => {
       },
     ],
   });
+  //where name of location is stored
   const [location, setLocation] = useState<string>("");
+  //array of temperatures for each day in the date range
   const [weather, setWeather] = useState<number[]>([]);
+  //start and end dates for the date range - could combine this state somehow
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [startDateString, setStartDateString] = useState<string>("");
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [endDateString, setEndDateString] = useState<string>("");
+  //corresponding colors to weather array
   const [colors, setColors] = useState<string[]>([]);
-  //displayImage starts as an HTML Element
+  //how I'm displaying the blanket - starts with placeholder image
   const [displayChildren, setDisplayChildren] = useState<React.JSX.Element[]>([displayImage]);
   const isFirstRender = useRef(true);
+  //startRef is a reference to the startDate DatePicker
+  const startRef = useRef<DatePicker>(null);
+  
+  //when startDate and endDate are updated, format them to update startDateString
   useEffect(() => {
     formatDate(startDate);
     formatDate(endDate);
   }, [startDate, endDate]);
 
+  // what does this do?
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -57,11 +71,13 @@ const App = () => {
     isDisabled = true;
   }, [endDate]);
 
+  //what
   useEffect(() => {
     isDisabled = true;
     return;
   }, [location]);
 
+  //what
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -160,19 +176,17 @@ const App = () => {
     setColors(colorsArr);
   }
 
-  //startRef and onKeyDown lets you tab from the startDate to endDate date picker
-  //need to define specific type for startRef
 
-  const startRef = useRef<DatePicker>(null);
-
+  
+  //allows you to tab from one Datepicker to the next - see what best practices is for tabbing
   const onKeyDown = (e: React.KeyboardEvent): void => {
-    //if key is is tab
     if (e.key === "tab") {
       //current is optional in case the ref is null  
       startRef.current?.setOpen(false);
     }
   };
 
+  //FIFTH: display the blanket
   const handleClick = (): void => {
     setDisplayChildren([<Blanket key={0} />]);
   };
@@ -195,10 +209,8 @@ const App = () => {
             type="text"
             value={location}
             onChange={(event) => setLocation(event.target.value)}
-            // onKeyDown={handleKeyDown}
             placeholder="Select Location"
-            //removing "Select Location" and replacing with empty string
-            onFocus={(event) => (event.target.placeholder = "")}
+            onFocus={(event) => (event.target.placeholder = "")} //removes "Select Location" and replacing with empty string
             onBlur={searchLocation}
             className="inputs"
           />
@@ -207,9 +219,8 @@ const App = () => {
             selected={startDate}
             selectsStart
             startDate={startDate}
-            endDate={endDate} // add the endDate to your startDate DatePicker now that it is defined
+            endDate={endDate}
             onChange={(date: Date) => setStartDate(date)}
-            //START HERE: FOCUS ON UNDERSTANDING WHAT USEREF IS DOING AND HOW TO FIX IT
             ref={startRef}
             onKeyDown={onKeyDown}
             className="inputs"

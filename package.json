@@ -2,6 +2,7 @@
   "name": "yarncast",
   "version": "1.0.0",
   "main": "webpack.config.js",
+  "type": "module",
   "scripts": {
     "start": "webpack-dev-server --hot --open",
     "build": "webpack --mode production",

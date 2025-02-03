@@ -1,11 +1,17 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const path = require("path");
+import HtmlWebPackPlugin from "html-webpack-plugin";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Convert import.meta.url to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const htmlPlugin = new HtmlWebPackPlugin({
   templateContent:
     '<html><head></head><body><div id="root"></div></body></html>',
 });
 
-module.exports = {
+export default {
   // mode: 'development',
   entry: "./src/index.js",
   output: {
@@ -48,10 +54,6 @@ module.exports = {
         use: ["style-loader", "css-loader", "sass-loader"],
       },
       { enforce: "pre", test: /\.js$/, exclude: /node_modules/, loader: "source-map-loader" },
-      // {
-      //   test: /\.png|svg|jpg|gif$/,
-      //   use: ["file-loader"],
-      // },
       {
         test: /\.(png|jpg|gif)$/i,
         use: [
@@ -65,5 +67,5 @@ module.exports = {
       },
     ],
   },
-  devtool: "source-map"
+  devtool: "source-map",
 };

@@ -1,11 +1,12 @@
 import * as React from "react";
 import {useState, useRef, useEffect} from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import placeholder from "../assets/placeholder-with-text.png";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Filters from "./components/Filters";
+//TO DO: revise flow of generating blanket colors and generate rows component instead of divs
+import Blanket from "./components/Blanket";
 
 const App = () => {
 
@@ -15,19 +16,19 @@ const App = () => {
   );
 
   //generates color for each row of the blanket
-  const Blanket = () => {
-    return (
-      <div className="blanket">
-        {colors.map((color, index) => (
-          <>
-            <div className="row" key={index} style={{ backgroundColor: color }}>
-              &nbsp;
-            </div>
-          </>
-        ))}
-      </div>
-    );
-  };
+  // const Blanket = () => {
+  //   return (
+  //     <div className="blanket">
+  //       {colors.map((color, index) => (
+  //         <>
+  //           <div className="row" key={index} style={{ backgroundColor: color }}>
+  //             &nbsp;
+  //           </div>
+  //         </>
+  //       ))}
+  //     </div>
+  //   );
+  // };
 
   //latitude and longitude of input location - structure reflects how the API returns the data
   const [coordinates, setCoordinates] = useState({
@@ -53,8 +54,8 @@ const App = () => {
   const [displayChildren, setDisplayChildren] = useState<React.JSX.Element[]>([displayImage]);
   //useRef to keep track of whether the component is rendering for the first time
   const isFirstRender = useRef(true);
-  //startRef is a reference to the startDate DatePicker
-  const startRef = useRef<DatePicker>(null);
+
+
   
   //when startDate and endDate are updated, format them to update startDateString
   useEffect(() => {
@@ -173,13 +174,7 @@ const App = () => {
 
 
   
-  //allows you to tab from one Datepicker to the next - see what best practices is for tabbing
-  const onKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key === "tab") {
-      //current is optional in case the ref is null  
-      startRef.current?.setOpen(false);
-    }
-  };
+
 
   //FIFTH: display the blanket
   const handleClick = (): void => {
@@ -194,10 +189,13 @@ const App = () => {
           location={location}
           setLocation={setLocation}
           searchLocation={searchLocation}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          handleClick={handleClick}
         />
-        <div className="display" id="display">
-          {displayChildren}
-        </div>
+        <Blanket />
         <Footer />
       </div>
     );
